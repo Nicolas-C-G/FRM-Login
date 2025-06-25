@@ -7,13 +7,14 @@ from sqlalchemy.future import select
 from models.models import User
 from functions.utils import create_access_token
 from passlib.hash import bcrypt
+from functions.schemas import CodePayload
 import httpx
 import jwt
 
 router = APIRouter()
 
 serializer = URLSafeTimedSerializer(SESSION_SECRET_KEY)
-
+           
 @router.post("/login")
 async def login(username: str, password: str, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).where(User.username == username))
@@ -37,9 +38,11 @@ def google_auth():
     return RedirectResponse(url)
 
 @router.post("/auth/google/callback")
-async def google_callback(code: str, db: AsyncSession = Depends(get_db)):
+async def google_callback(payload: CodePayload, db: AsyncSession = Depends(get_db)):
+    code = payload.code
     token_url = "https://oauth2.googleapis.com/token"
     redirect_uri = "http://localhost:3000/oauth/google/callback"
+
     data = {
         "code": code,
         "client_id": GOOGLE_CLIENT_ID,
@@ -47,19 +50,25 @@ async def google_callback(code: str, db: AsyncSession = Depends(get_db)):
         "redirect_uri": redirect_uri,
         "grant_type": "authorization_code"
     }
-    async with httpx.AsyncClient() as client:
-        resp = await client.post(token_url, data=data)
-        resp.raise_for_status()
-        tokens = resp.json()
-        id_token = tokens["id_token"]
-        id_info = jwt.decode(id_token, options={"verify_signature": False})
-        email = id_info["email"]
-    
+
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(token_url, data=data)
+            resp.raise_for_status()
+            tokens = resp.json()
+            id_token = tokens["id_token"]
+            id_info = jwt.decode(id_token, options={"verify_signature": False})
+            email = id_info["email"]
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"OAuth failed: {str(e)}")
+
     result = await db.execute(select(User).where(User.email == email))
     user = result.scalar_one_or_none()
+
     if not user:
-        new_user = User(email=email, oauth_provider="google")
+        new_user = User(email=email, oauth_provider="google", status=1)
         db.add(new_user)
         await db.commit()
+
     token = create_access_token({"sub": email})
     return {"token": token}
