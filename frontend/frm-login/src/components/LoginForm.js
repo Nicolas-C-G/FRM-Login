@@ -26,6 +26,10 @@ function LoginForm() {
       <button onClick={() => window.location.href = "http://localhost:8000/auth/google"}>
         Login with Google
       </button>
+
+      <button onClick={() => window.location.href = "http://localhost:8000/auth/microsoft"}>
+        Login with Microsoft
+      </button>
     </div>
   );
 }

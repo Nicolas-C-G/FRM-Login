@@ -9,6 +9,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LoginForm />} />
         <Route path="/oauth/google/callback" element={<OAuthCallback provider="google" />} />
+        <Route path="/oauth/microsoft/callback" element={<OAuthCallback provider="microsoft" />} />
         <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </Router>
