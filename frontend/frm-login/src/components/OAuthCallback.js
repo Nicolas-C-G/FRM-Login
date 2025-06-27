@@ -1,8 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import axios from "axios";
 
 function OAuthCallback({ provider }) {
+  const calledRef = useRef(false);
+  
   useEffect(() => {
+
+    if (calledRef.current) return;
+    calledRef.current = true;
+
     const code = new URLSearchParams(window.location.search).get("code");
 
     if (!code) {

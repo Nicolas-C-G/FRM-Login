@@ -131,5 +131,11 @@ async def microsoft_callback(payload: CodePayload, db: AsyncSession = Depends(ge
         await db.refresh(new_user)
         user = new_user  # ✅ Assign it to make sure it’s used below
 
-    token = create_access_token({"sub": user.email})
+    try: 
+        token = create_access_token({"sub": user.email})
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Token generation faild: {repr(e)}")
+    
     return {"token": token}
