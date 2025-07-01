@@ -1,13 +1,14 @@
 import { useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function LoginForm() {
-  const [username, setUsername] = useState("");
+  const [email, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = (e) => {
     e.preventDefault();
-    axios.post("http://localhost:8000/login", { username, password })
+    axios.post("http://localhost:8000/login", { email, password })
       .then(res => {
         localStorage.setItem("token", res.data.token);
         window.location.href = "/dashboard";
@@ -18,7 +19,7 @@ function LoginForm() {
   return (
     <div>
       <form onSubmit={handleLogin}>
-        <input type="text" value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" />
+        <input type="text" value={email} onChange={e => setUsername(e.target.value)} placeholder="Email" />
         <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" />
         <button type="submit">Login</button>
       </form>
@@ -30,6 +31,11 @@ function LoginForm() {
       <button onClick={() => window.location.href = "http://localhost:8000/auth/microsoft"}>
         Login with Microsoft
       </button>
+
+      <Link to="/register">
+        <button>Register New User</button>
+      </Link>
+      
     </div>
   );
 }

@@ -8,7 +8,7 @@ from sqlalchemy.future import select
 from models.models import User
 from functions.utils import create_access_token
 from passlib.hash import bcrypt
-from functions.schemas import CodePayload, LoginRequest
+from functions.schemas import CodePayload, LoginRequest, RegisterRequest
 import httpx
 import jwt
 
@@ -18,9 +18,9 @@ serializer = URLSafeTimedSerializer(SESSION_SECRET_KEY)
            
 @router.post("/login")
 async def login(data: LoginRequest, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(User).where(User.username == data.username))
+    result = await db.execute(select(User).where(User.email == data.email))
     user = result.scalar_one_or_none()
-    if not user or not user.hashed_password or not bcrypt.verify(data.password, user.hashed_password):
+    if not user or not user.password or not bcrypt.verify(data.password, user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     token = create_access_token({"sub": user.email})
     
@@ -139,3 +139,23 @@ async def microsoft_callback(payload: CodePayload, db: AsyncSession = Depends(ge
         raise HTTPException(status_code=500, detail=f"Token generation faild: {repr(e)}")
     
     return {"token": token}
+
+@router.post("/register")
+async def register(data: RegisterRequest, db: AsyncSession = Depends(get_db)):
+    # Check if user already exists
+    existing_user = await db.execute(select(User).where(User.username == data.username))
+    if existing_user.scalar_one_or_none():
+        raise HTTPException(status_code=400, detail="Username already registered")
+
+    hashed_pw = bcrypt.hash(data.password)
+    new_user = User(
+        username=data.username,
+        email=data.email,
+        password=hashed_pw,
+        oauth_provider=None,
+        status=1
+    )
+    db.add(new_user)
+    await db.commit()
+
+    return {"message": "User registered successfully"}

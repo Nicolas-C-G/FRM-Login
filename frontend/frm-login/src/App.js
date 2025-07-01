@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import LoginForm from "./components/LoginForm";
 import OAuthCallback from "./components/OAuthCallback";
 import Dashboard from "./components/Dashboard";
+import RegisterForm from "./components/RegisterForm";
 import  { jwtDecode } from "jwt-decode";
 
 const PrivateRoute = ({ children }) => {
@@ -30,6 +31,7 @@ function App() {
         <Route path="/" element={<LoginForm />} />
         <Route path="/oauth/google/callback" element={<OAuthCallback provider="google" />} />
         <Route path="/oauth/microsoft/callback" element={<OAuthCallback provider="microsoft" />} />
+        <Route path="/register" element={<RegisterForm/>}/>
         <Route path="/dashboard" element={
           <PrivateRoute>
             <Dashboard/>
