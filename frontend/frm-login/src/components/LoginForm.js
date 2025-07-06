@@ -26,38 +26,62 @@ function LoginForm() {
   };
 
   return (
-    <div style={{ position: "relative", height: "100vh", overflow: "hidden" }}>
+    <div className="d-flex align-items-center justify-content-center vh-100 position-relative">
       <ThreeBackground />
       
-      <div style={{
-        position: "relative",
-        zIndex: 1,
-        maxWidth: 400,
-        margin: "0 auto",
-        top: "20%",
-        padding: 30,
-        background: "rgba(255,255,255,0.9)",
-        borderRadius: 10,
-        boxShadow: "0 0 10px rgba(0,0,0,0.3)"
-      }}>
-
+      <div
+        className="p-5 rounded shadow-lg position-relative"
+        style={{
+          backgroundColor: "rgba(255, 255, 255, 0.9)",
+          zIndex: 1,
+          minWidth: "350px",
+        }}
+      >
+        <h2 className="text-center mb-4">Login</h2>
         <form onSubmit={handleLogin}>
-          <input type="text" value={email} onChange={e => setUsername(e.target.value)} placeholder="Email" />
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" />
-          <button type="submit">Login</button>
+          <div className="mb-3">
+            <input
+              type="text"
+              className="form-control"
+              value={email}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Email"
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <input
+              type="password"
+              className="form-control"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              required
+            />
+          </div>
+          <button type="submit" className="btn btn-primary w-100 mb-3">
+            Login
+          </button>
         </form>
 
-        <button onClick={() => window.location.href = "http://localhost:8000/auth/google"}>
+        <button
+          className="btn btn-outline-dark w-100 mb-2"
+          onClick={() => (window.location.href = "http://localhost:8000/auth/google")}
+        >
           Login with Google
         </button>
-
-        <button onClick={() => window.location.href = "http://localhost:8000/auth/microsoft"}>
+        <button
+          className="btn btn-outline-dark w-100 mb-3"
+          onClick={() => (window.location.href = "http://localhost:8000/auth/microsoft")}
+        >
           Login with Microsoft
         </button>
 
-        <Link to="/register">
-          <button>Register New User</button>
-        </Link>
+        <p className="text-center">
+          <Link to="/register" className="text-decoration-none">
+            Register New User
+          </Link>
+        </p>
       </div>
     </div>
   );

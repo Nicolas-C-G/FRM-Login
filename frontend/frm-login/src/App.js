@@ -4,6 +4,7 @@ import OAuthCallback from "./components/OAuthCallback";
 import Dashboard from "./components/Dashboard";
 import RegisterForm from "./components/RegisterForm";
 import  { jwtDecode } from "jwt-decode";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem("token");
