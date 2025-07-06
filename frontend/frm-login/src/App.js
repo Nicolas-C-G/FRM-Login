@@ -6,6 +6,7 @@ import RegisterForm from "./components/RegisterForm";
 import  { jwtDecode } from "jwt-decode";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+//app done
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem("token");
   
